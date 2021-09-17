@@ -1,24 +1,55 @@
-import logo from './logo.svg';
+
+import { useState, useEffect } from "react";
+import { Route, Switch, BrowserRouter } from "react-router-dom";
+import countriesJson from "./countries.json";
+
+import TopPage from "./pages/TopPage";
+import WorldPage from "./pages/WorldPage";
 import './App.css';
+import userEvent from "@testing-library/user-event";
 
 function App() {
+  const [country, setCountry] = useState("");
+  const [countryData, setCountryData] = useState({
+    date:"",
+    newConfirmed:"",
+    totalConfirmed:"",
+    newRecovered:"",
+    totalRecovered:""
+  });
+  const [allCountriesData, setAllcountriesData] = useState([]);
+	
+	const getCountryData = () => {
+		fetch(`https://api.covid19api.com/country/${country}`)
+		.then(res => res.json())
+		.then(data => {
+      setCountryData({
+        date: data[data.length - 1].Date,
+        newConfirmed: data[data.length - 1].Confirmed - data[data.length - 2].Confirmed,
+        totalConfirmed: data[data.length - 1].Confirmed,
+        newRecovered: data[data.length - 1].Recovered - data[data.length - 2].Recovered,
+        totalRecovered: data[data.length - 1].Recovered
+      });
+    })
+	}
+
+  useEffect(() => {
+      fetch("https://api.covid19api.com/summary")
+      .then(res => res.json())
+      .then(data => setAllcountriesData(data.Countries))
+  },[]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/">
+          <TopPage countriesJson={countriesJson} setCountry={setCountry} getCountryData={getCountryData} countryData={countryData} />
+        </Route>
+        <Route exact path="/world">
+          <WorldPage allCountriesData={allCountriesData} />
+        </Route>
+      </Switch>
+    </BrowserRouter>
   );
 }
 
