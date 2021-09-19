@@ -8,17 +8,25 @@ import WorldPage from "./pages/WorldPage";
 import './App.css';
 import userEvent from "@testing-library/user-event";
 
+type CountryDataType ={
+  date: string,
+  newConfirmed: number,
+  totalConfirmed: number,
+  newRecovered: number,
+  totalRecovered: number
+}
+
 function App() {
-  const [loading, setLoading] = useState(false);
-  const [country, setCountry] = useState("japan");
-  const [countryData, setCountryData] = useState({
-    date:"",
-    newConfirmed:"",
-    totalConfirmed:"",
-    newRecovered:"",
-    totalRecovered:""
+  const [loading, setLoading] = useState<boolean>(false);
+  const [country, setCountry] = useState<string>("japan");
+  const [countryData, setCountryData] = useState<CountryDataType>({
+    date: "",
+    newConfirmed: 0,
+    totalConfirmed: 0,
+    newRecovered: 0,
+    totalRecovered: 0
   });
-  const [allCountriesData, setAllcountriesData] = useState([]);
+  const [allCountriesData, setAllCountriesData] = useState([]);
 	
 
 
